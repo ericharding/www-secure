@@ -76,7 +76,7 @@ const App: Component = () => {
     <>
       <div class="flex flex-col items-center justify-center p-4 bg-slate-400">
         <Label text="Password:">
-          <input autofocus type="password" class="grow" value={password()} onChange={inputChanged(setPassword)} />
+          <input autofocus type="password" class="grow" autocomplete='off' value={password()} onChange={inputChanged(setPassword)} />
         </Label>
         <Label text="Token:">
           <input type="text" class="grow" value={token()} onChange={inputChanged(setToken)} />
