@@ -1,4 +1,5 @@
 import { Component, createEffect, createSignal, ParentComponent } from "solid-js";
+import gen from "./hasher";
 
 const Label: ParentComponent<{ text: string }> = (props) => {
   return (
@@ -9,18 +10,25 @@ const Label: ParentComponent<{ text: string }> = (props) => {
   );
 };
 
-const ClipText: Component<{ label: string }> = (props) => {
-  return <Label text={props.label}>
-    <input type="text" readonly class="grow bg-gray-50" />
-  </Label>;
+const ClipText: Component<{ label: string; value?: string }> = (props) => {
+  return (
+    <Label text={props.label}>
+      <input type="text" readonly value={props.value ?? ""} class="grow bg-gray-50" />
+    </Label>
+  );
 };
 
 const App: Component = () => {
   const [password, setPassword] = createSignal("");
-  const [key, setKey] = createSignal("");
+  const [token, setToken] = createSignal("");
   const inputChanged = (fn) => (e) => {
     const target = e.target as HTMLInputElement;
     fn(target?.value ?? "");
+  };
+  const genPassword = (i: number) => {
+    if (password() === "" || token() === "") return "";
+    const hash = gen(password(), token());
+    return hash.substring(0, i);
   };
   return (
     <>
@@ -29,13 +37,13 @@ const App: Component = () => {
           <input type="password" class="grow" value={password()} onChange={inputChanged(setPassword)} />
         </Label>
         <Label text="Token:">
-          <input type="text" class="grow" value={password()} onChange={inputChanged(setKey)} />
+          <input type="text" class="grow" value={token()} onChange={inputChanged(setToken)} />
         </Label>
       </div>
       <div class="flex flex-col items-center justify-center p-4 bg-slate-500">
-        <ClipText label="Result" />
-        <ClipText label="Short (8):" />
-        <ClipText label="Medium (12):" />
+        <ClipText label="Result" value={genPassword(128)} />
+        <ClipText label="Short (8):" value={genPassword(8)} />
+        <ClipText label="Medium (12):" value={genPassword(12)} />
       </div>
     </>
   );
