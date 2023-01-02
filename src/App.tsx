@@ -1,5 +1,5 @@
-import { Component, createEffect, createSignal, ParentComponent } from "solid-js";
-import gen from "./hasher";
+import { Component, createEffect, createSignal, onCleanup, onMount, ParentComponent } from 'solid-js'
+import gen from './hasher'
 
 const Label: ParentComponent<{ text: string }> = (props) => {
   return (
@@ -7,29 +7,59 @@ const Label: ParentComponent<{ text: string }> = (props) => {
       <span class="text-black basis-1/3 px-1">{props.text}</span>
       {props.children}
     </label>
-  );
-};
+  )
+}
 
 const ClipText: Component<{ label: string; value?: string }> = (props) => {
   return (
     <Label text={props.label}>
-      <input type="text" readonly value={props.value ?? ""} class="grow bg-gray-50" />
+      <input type="text" readonly value={props.value ?? ''} class="grow bg-gray-50" />
     </Label>
-  );
-};
+  )
+}
+
+function ignore(t) {}
+
+var lastUpdated = null
+function setLastUpdated() {
+  lastUpdated = Date.now()
+  // console.log(`lasdUpdated: ${lastUpdated}`)
+}
+function secondsSinceLastUpdate() {
+  const secondsSinceUpdate =  (Date.now() - lastUpdated) / 1000
+  // console.log(`Checking... seconds since update: ${secondsSinceUpdate}}`)
+  return secondsSinceUpdate;
+}
 
 const App: Component = () => {
-  const [password, setPassword] = createSignal("");
-  const [token, setToken] = createSignal("");
+  const [password, setPassword] = createSignal('')
+  const [token, setToken] = createSignal('')
   const inputChanged = (fn) => (e) => {
-    const target = e.target as HTMLInputElement;
-    fn(target?.value ?? "");
-  };
+    const target = e.target as HTMLInputElement
+    fn(target?.value ?? '')
+  }
+
+  // Update last updated when password or token changes
+  createEffect(() => {
+    ignore(password())
+    ignore(token())
+    setLastUpdated()
+  })
+
   const genPassword = (i: number) => {
-    if (password() === "" || token() === "") return "";
-    const hash = gen(password(), token());
-    return hash.substring(0, i);
-  };
+    if (password() === '' || token() === '') return ''
+    const hash = gen(password(), token())
+    return hash.substring(0, i)
+  }
+
+  const checkIdle = () => {
+    if (secondsSinceLastUpdate() > 300) {
+      setPassword('')
+    }
+  }
+  const interval = setInterval(checkIdle, 1000)
+  onCleanup(() => clearInterval(interval))
+
   return (
     <>
       <div class="flex flex-col items-center justify-center p-4 bg-slate-400">
@@ -46,7 +76,7 @@ const App: Component = () => {
         <ClipText label="Medium (12):" value={genPassword(12)} />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default App;
+export default App
