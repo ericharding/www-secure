@@ -26,9 +26,9 @@ function setLastUpdated() {
   // console.log(`lasdUpdated: ${lastUpdated}`)
 }
 function secondsSinceLastUpdate() {
-  const secondsSinceUpdate =  (Date.now() - lastUpdated) / 1000
+  const secondsSinceUpdate = (Date.now() - lastUpdated) / 1000
   // console.log(`Checking... seconds since update: ${secondsSinceUpdate}}`)
-  return secondsSinceUpdate;
+  return secondsSinceUpdate
 }
 
 const App: Component = () => {
@@ -64,7 +64,13 @@ const App: Component = () => {
     <>
       <div class="flex flex-col items-center justify-center p-4 bg-slate-400">
         <Label text="Password:">
-          <input type="password" class="grow" value={password()} onChange={inputChanged(setPassword)} />
+          <input
+            autofocus
+            type="password"
+            class="grow"
+            value={password()}
+            onChange={inputChanged(setPassword)}
+          />
         </Label>
         <Label text="Token:">
           <input type="text" class="grow" value={token()} onChange={inputChanged(setToken)} />
