@@ -14,7 +14,7 @@ const CopyButton: Component<{ value?: string }> = (props) => {
 
 const Label: ParentComponent<{ text: string }> = (props) => {
   return (
-    <label class="bg-slate-300 flex flex-row w-1/3">
+    <label class="bg-slate-300 flex flex-row w-1/3 ">
       <span class="text-black basis-1/3 grow-0 mx-1">{props.text}</span>
       {props.children}
     </label>
@@ -59,7 +59,7 @@ const App: Component = () => {
   })
 
   const genPassword = (i: number) => {
-    if (password() === '' || token() === '') return ''
+    if (password() === '' && token() === '') return ''
     const hash = gen(password(), token())
     return hash.substring(0, i)
   }
@@ -74,12 +74,25 @@ const App: Component = () => {
 
   return (
     <>
-      <div class="flex flex-col items-center justify-center p-4 bg-slate-400">
+      <div class="flex flex-col items-center justify-start p-4 bg-slate-400">
         <Label text="Password:">
-          <input autofocus type="password" class="grow" autocomplete='off' value={password()} onChange={inputChanged(setPassword)} />
+          <input
+            autofocus
+            type="password"
+            class="grow"
+            autocomplete="off"
+            value={password()}
+            onChange={inputChanged(setPassword)}
+          />
         </Label>
         <Label text="Token:">
-          <input type="text" class="grow" value={token()} onChange={inputChanged(setToken)} />
+          <input
+            type="text"
+            class="grow"
+            value={token()}
+            onKeyUp={inputChanged(setToken)}
+            onChange={inputChanged(setToken)}
+          />
         </Label>
       </div>
       <div class="flex flex-col items-center justify-center p-4 bg-slate-500">
