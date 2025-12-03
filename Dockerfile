@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM docker.io/library/node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM nginx:alpine
+FROM docker.io/library/nginx:alpine
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
